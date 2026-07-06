@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Copy-Item \"c:\\\\Users\\\\huangwenzhi\\\\Downloads\\\\Blr tutoring service\\\\uploads\\\\pasted-1779097568197-0.png\" -Destination \"c:\\\\Users\\\\huangwenzhi\\\\Downloads\\\\Blr tutoring service\\\\assets\\\\takalani-tutor.png\")",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\huangwenzhi\\\\Downloads\\\\Blr tutoring service\" -File | Where-Object { $_.Extension -ne '.png' -and $_.Extension -ne '.jpeg' -and $_.Extension -ne '.jpg' } | Format-Table Name, Length)",
+      "WebSearch",
+      "WebFetch(domain:www.capitecbank.co.za)",
+      "Bash(python3 -m http.server 8080)",
+      "Bash(start \"\" \"c:/Users/huangwenzhi/Downloads/Blr tutoring service/index.html\")",
+      "Bash(where msedge *)",
+      "Bash(where chrome *)",
+      "Bash(curl -s http://localhost:8080/index.html)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'v1.0 complete — full site refresh with new hero, sticky glass nav, interactive bank card, testimonials pagination, SEO files, and POPIA privacy page *)"
+    ]
+  }
+}
