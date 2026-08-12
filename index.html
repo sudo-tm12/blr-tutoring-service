@@ -1192,15 +1192,19 @@
   .char-count { font-size: 11px; color: var(--ink-soft); text-align: right; font-weight: 500; }
   .form-actions { display: flex; gap: 12px; align-items: center; margin-top: 18px; }
   .success-msg {
-    display: none; align-items: center; gap: 10px;
+    display: none; align-items: flex-start; gap: 10px;
     background: #E8F5EE; border: 1px solid #B4DDC4;
     color: #1E7B4A;
     border-radius: 12px;
     padding: 12px 16px; font-size: 13px;
-    margin-top: 14px; font-weight: 500;
+    margin-top: 14px; font-weight: 500; line-height: 1.5;
   }
   .success-msg.show { display: flex; }
-  .success-msg svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+  .success-msg svg {
+    width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.2; fill: none;
+    flex-shrink: 0; margin-top: 3px;
+  }
+  .success-msg a { color: inherit; text-decoration: underline; font-weight: 700; }
 
   /* Show-more button */
   .t-show-more {
@@ -2663,7 +2667,7 @@
       <div class="t-form-wrap reveal">
       <div class="t-form-head">
         <h4>Studied with us? <em>Leave a review</em></h4>
-        <p>Tell the next learner what to expect. Your words help families decide.</p>
+        <p>Tell the next learner what to expect. Your review is emailed to us and goes on the site once we've checked it.</p>
       </div>
       <form id="testimonialForm" novalidate>
         <div class="form-row">
@@ -2704,13 +2708,15 @@
           <div class="char-count"><span id="charCount">0</span> / 400</div>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn btn-dark btn-lg">Post review
+          <button type="submit" class="btn btn-dark btn-lg">Send review
             <svg class="icn" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
           </button>
         </div>
         <div class="success-msg" id="successMsg">
           <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-          Review posted! Thank you — your words help the next learner decide.
+          <span>Your email app is opening — press send to deliver your review. Nothing reaches
+            us until you do. If it doesn't open, email
+            <a href="mailto:blrtutoringservices@gmail.com">blrtutoringservices@gmail.com</a>.</span>
         </div>
       </form>
       </div>
@@ -3290,7 +3296,7 @@
             <div class="t-name">${escapeHTML(t.name)}</div>
             <div class="t-meta">${escapeHTML(t.grade)} · ${escapeHTML(t.subject)}</div>
           </div>
-          ${t.seed ? '' : '<span class="t-new">New</span>'}
+          ${t.seed ? '' : '<span class="t-new" title="Only visible to you until we approve it">Pending</span>'}
         </div>
       `;
       grid.appendChild(card);
@@ -3331,6 +3337,9 @@
   const charCount = document.getElementById('charCount');
   msgInput.addEventListener('input', () => { charCount.textContent = msgInput.value.length; });
 
+  // Where reviews are sent for approval before they go on the site
+  const REVIEW_INBOX = 'blrtutoringservices@gmail.com';
+
   // Form submit
   document.getElementById('testimonialForm').addEventListener('submit', e => {
     e.preventDefault();
@@ -3357,7 +3366,7 @@
     charCount.textContent = '0';
     const msg = document.getElementById('successMsg');
     msg.classList.add('show');
-    setTimeout(() => msg.classList.remove('show'), 6000);
+    setTimeout(() => msg.classList.remove('show'), 15000);
 
     // Highlight the newest card (rendered first) and bring it into view.
     if (grid && grid.firstElementChild) {
@@ -3366,6 +3375,25 @@
       newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setTimeout(() => newCard.classList.remove('just-posted'), 2600);
     }
+
+    // Hand the review to the visitor's mail app, addressed to BLR. Nothing is sent
+    // automatically — they still press send. Done last so the UI above has already
+    // updated by the time the mail client takes focus.
+    const mailSubject = `New website review — ${name} (${grade}, ${subject})`;
+    const mailBody = [
+      `Name:    ${name}`,
+      `Grade:   ${grade}`,
+      `Subject: ${subject}`,
+      `Rating:  ${rating}/5`,
+      '',
+      'Review:',
+      text,
+      '',
+      '— Sent from the review form on blrtutoring.co.za',
+    ].join('\n');
+    window.location.href = `mailto:${REVIEW_INBOX}`
+      + `?subject=${encodeURIComponent(mailSubject)}`
+      + `&body=${encodeURIComponent(mailBody)}`;
   });
 
   // Active nav on scroll (throttled via rAF) + glass depth
