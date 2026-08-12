@@ -23,10 +23,21 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # Publish an explicit list rather than the whole repo, so working files
+      # (PRD.md, Design.md, CLAUDE.md, uploads/, scraps/) are never served.
+      # A file missing here 404s loudly; a denylist would leak new docs quietly.
+      - name: Stage site files
+        run: |
+          mkdir -p _site
+          cp index.html privacy.html robots.txt sitemap.xml .nojekyll _site/
+          cp -r assets _site/
+          if [ -f CNAME ]; then cp CNAME _site/; fi
+          find _site -type f | sort
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
   deploy:
     needs: build
