@@ -733,7 +733,14 @@
   .sched-head div:last-child { border-right: none; }
   .sched-row { display: grid; grid-template-columns: 90px repeat(5, 1fr); border-bottom: 1px solid var(--line-2); min-height: 64px; }
   .sched-row:last-child { border-bottom: none; }
-  .sched-time { padding: 14px; border-right: 1px solid var(--line-2); font-size: 12px; color: var(--ink-3); display: flex; align-items: center; font-weight: 500; }
+  .sched-time {
+    padding: 14px; border-right: 1px solid var(--line-2);
+    font-size: 12px; color: var(--ink-3); font-weight: 500;
+    display: flex; flex-direction: column; justify-content: center; gap: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .sched-time .t-to { color: var(--ink-4, #8A9AA8); font-size: 11px; }
+  .sched-time .t-to::before { content: "–"; margin-right: 1px; }
   .sched-cell { border-right: 1px solid var(--line-2); padding: 8px; position: relative; }
   .sched-cell:last-child { border-right: none; }
   .sched-class {
@@ -2580,22 +2587,22 @@
   <section class="sched-wrap" id="schedule">
     <div class="sched-head-row">
       <h3>A real week, not a brochure</h3>
-      <p>Sample weekly timetable — confirmed schedule sent on enrolment.</p>
+      <p>Our weekly class timetable — confirmed times sent on enrolment.</p>
     </div>
     <div class="schedule" role="table">
       <div class="sched-head">
-        <div>Time</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Sat</div>
+        <div>Time</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div>
       </div>
       <div class="sched-row">
-        <div class="sched-time">15:30</div>
+        <div class="sched-time"><span class="t-from">16:30</span><span class="t-to">17:30</span></div>
         <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 10</span></div></div>
         <div class="sched-cell"><div class="sched-class phys"><span class="sj">Phys Sci</span><span class="gd">Gr 10</span></div></div>
         <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 10</span></div></div>
+        <div class="sched-cell"><div class="sched-class phys"><span class="sj">Phys Sci</span><span class="gd">Gr 10</span></div></div>
         <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="sched-class"><span class="sj">Exam clinic</span><span class="gd">All grades</span></div></div>
       </div>
       <div class="sched-row">
-        <div class="sched-time">16:45</div>
+        <div class="sched-time"><span class="t-from">18:00</span><span class="t-to">19:30</span></div>
         <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 11</span></div></div>
         <div class="sched-cell"><div class="sched-class phys"><span class="sj">Phys Sci</span><span class="gd">Gr 11</span></div></div>
         <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 11</span></div></div>
@@ -2603,12 +2610,12 @@
         <div class="sched-cell"></div>
       </div>
       <div class="sched-row">
-        <div class="sched-time">18:00</div>
+        <div class="sched-time"><span class="t-from">20:30</span><span class="t-to">21:30</span></div>
         <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 12</span></div></div>
         <div class="sched-cell"><div class="sched-class phys"><span class="sj">Phys Sci</span><span class="gd">Gr 12</span></div></div>
         <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 12</span></div></div>
         <div class="sched-cell"><div class="sched-class phys"><span class="sj">Phys Sci</span><span class="gd">Gr 12</span></div></div>
-        <div class="sched-cell"><div class="sched-class"><span class="sj">Past papers</span><span class="gd">Gr 12</span></div></div>
+        <div class="sched-cell"><div class="sched-class"><span class="sj">Maths</span><span class="gd">Gr 12</span></div></div>
       </div>
     </div>
   </section>
@@ -2629,7 +2636,7 @@
       <div class="price-label">Per subject · per learner</div>
       <div class="price-amount"><sup>R</sup>250<sub>/month</sub></div>
       <div class="price-list">
-        <div><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3"/></svg></span>3–4 live group sessions every week</div>
+        <div><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3"/></svg></span>2–3 live group sessions every week</div>
         <div><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3"/></svg></span>Recordings if you miss a class</div>
         <div><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3"/></svg></span>Past paper packs &amp; memos</div>
         <div><span class="chk"><svg viewBox="0 0 12 12"><path d="M2 6.5L5 9.5L10 3"/></svg></span>WhatsApp homework help all month</div>
