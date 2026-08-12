@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Lets the site be redeployed from the Actions tab without a commit —
+  # needed after changing the Pages source, which does not republish itself.
+  workflow_dispatch:
 
 permissions:
   contents: read
