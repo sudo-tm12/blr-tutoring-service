@@ -35,6 +35,9 @@ jobs:
           cp index.html privacy.html robots.txt sitemap.xml .nojekyll _site/
           cp -r assets _site/
           if [ -f CNAME ]; then cp CNAME _site/; fi
+          # Search-engine ownership files, if any are ever added at the root.
+          find . -maxdepth 1 \( -name 'google*.html' -o -name 'BingSiteAuth.xml' \) \
+            -exec cp {} _site/ \;
           find _site -type f | sort
 
       - name: Upload artifact

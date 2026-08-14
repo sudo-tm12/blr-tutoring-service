@@ -316,6 +316,18 @@
     width: 6px; height: 6px; border-radius: 50%; background: #4FFFAB;
     box-shadow: 0 0 0 4px rgba(79,255,171,0.20);
   }
+  /* Names the page for screen readers and search engines without altering
+     the visible wordmark. */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
   .hero-title {
     font-weight: 800;
     font-size: clamp(64px, 13vw, 168px);
@@ -2173,7 +2185,7 @@
       </svg>
       <div class="hero-content">
         <span class="hero-tag"><span class="pulse"></span>Live group classes · Grades 10–12</span>
-        <h1 class="hero-title">STUDY<sup>BLR</sup></h1>
+        <h1 class="hero-title"><span class="sr-only">BLR Tutoring — small-group Mathematics and Physical Sciences classes for Grade 10–12 learners in South Africa</span><span aria-hidden="true">STUDY<sup>BLR</sup></span></h1>
         <p class="hero-sub">
           Master Mathematics &amp; Physical Sciences with small-group classes built around the CAPS curriculum, taught by a tutor who remembers exactly how it felt to struggle at the back.
         </p>
