@@ -1,0 +1,6 @@
+# Secrets and machine-local environment files
+.env
+.env.*
+.env.local
+supabase/.env
+dashboard/**/.env*

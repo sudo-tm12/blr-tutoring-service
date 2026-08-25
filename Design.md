@@ -54,6 +54,7 @@ The palette is **navy-led, sky-accented, with one warm rust** for emotional warm
 --sky-deep:   #2F87B8   /* hover for sky */
 --sky-tint:   #E8F2F9   /* badges, soft fills */
 --rust:       #E8A24E   /* warmth, ratings, secondary accent */
+--rust-tint:  #FBEFE2   /* soft rust fills: phys schedule cells, dashboard partial chips */
 --green:      #2E9F6A   /* success, "live" indicators */
 ```
 
@@ -71,6 +72,7 @@ The palette is **navy-led, sky-accented, with one warm rust** for emotional warm
 - **Helper text** on `--card`: `--ink-3` (passes 4.5:1 at 14px+).
 - **Sky** is reserved for: links, primary accent on dark surfaces, focus rings, "active" states.
 - **Rust** is reserved for: star ratings, warm CTAs, secondary trust accents. Don't use it on primary CTAs (it competes with sky).
+- **Rust-tint** is reserved for: soft rust fills — the phys-science schedule cells on the site, status chips in the dashboard. Never as a button colour.
 - **Green** is reserved for: success messages, the "Live" pulse dot. Never as a CTA colour.
 - **Never** introduce a new colour without adding it to this list.
 
@@ -375,11 +377,48 @@ For each section, what we're optimizing for and what visual treatment delivers i
 
 ---
 
-## 10. Versioning of this document
+## 10. Dashboard extension
+
+The owner dashboard (`dashboard/`) reuses this spec. Everything above still governs `index.html`; the rules below govern the dashboard, and only the dashboard.
+
+### Tokens
+- The dashboard imports every token in §3.1 verbatim into `dashboard/css/app.css`.
+- **One new core token**, precedented by `.sched-class.phys` in the site (which already uses a rust-tinted fill): `--rust-tint` (added in §3.1 above).
+- The site also already ships success-message greens (`#E8F5EE` / `#B4DDC4` / `#1E7B4A`) and the physics-hub rust deep (`#B45D2C`). The dashboard formalizes these as **chip tokens** — every value precedented, no new hues:
+
+```
+--green-tint: #E8F5EE   --green-mid: #B4DDC4   --green-deep: #1E7B4A
+--rust-deep:  #B45D2C   --rust-tint: #FBEFE2
+```
+
+### Status chips
+Chips are the dashboard's primary status language. Colour alone never carries meaning — every chip carries text.
+
+| Status              | Background         | Text              | Border                |
+|---------------------|--------------------|-------------------|-----------------------|
+| Paid / Present      | `--green-tint`     | `--green-deep`    | `--green-mid`         |
+| Partial / Late      | `--rust-tint`      | `--rust-deep`     | `rgba(232,162,78,.45)` (rust at 45%) |
+| Unpaid / Open       | `--paper`          | `--ink-3`         | `--line`              |
+| Absent              | `--line`           | `--ink-soft`      | `--line-2`            |
+| Excused / Info      | `--sky-tint`       | `--sky-deep`      | `--line`              |
+| Overdue / Attention | `--card`           | `--rust-deep`     | `--rust`              |
+
+### Layout
+- **App shell:** fixed 240px sidebar (`--ink` bg, white text, `--sky` active states) + content area on `--bg`. At ≤ 640px the sidebar becomes the site's off-canvas drawer pattern (hamburger button, overlay, Esc + click-outside close).
+- **Content:** max-width 1200px. Cards use `--card` bg, `--r-md` radius, `--line` border. The dashboard is dense — `--shadow` only on hover.
+- **Stat tiles:** `--card` surface, number at 800 weight, 11px uppercase `--ink-soft` caption.
+- **Tables:** `--card` surface, 13px rows with `--line-2` dividers, 11px uppercase `--ink-soft` header row, `--paper` row hover. No zebra striping.
+- **Forms & modals:** reuse §5.4 and §5.5 exactly.
+- **Charts:** inline SVG bars — `--sky` bars, `--rust` overlay for outstanding, `--line` gridlines, 11px `--ink-soft` labels. No chart library, no animation beyond the §3.5 allowed set.
+- **Touch targets ≥ 44px on mobile; `prefers-reduced-motion` honoured as in §3.5.**
+
+---
+
+## 11. Versioning of this document
 
 Changes to design tokens, components, or section intent require:
 1. Update this file.
-2. Update `index.html` CSS to match.
+2. Update the CSS to match (`index.html` `<style>`, and/or `dashboard/css/app.css`).
 3. Note the change in PRD §14 Decision Log.
 
 Do not introduce design exceptions in code without first updating Design.md. If you find yourself writing inline styles with new colours or font sizes, stop — the right answer is either a new token or a re-use of an existing one.
