@@ -4,7 +4,10 @@ export function downloadCSV(filename, rows) {
   if (!rows.length) return false;
   const headers = [...new Set(rows.flatMap(r => Object.keys(r)))];
   const cell = v => {
-    const s = String(v ?? '');
+    let s = String(v ?? '');
+    // Stop spreadsheet formula injection: a leading = + - @ (or control
+    // char) makes Excel/Sheets execute the cell. Prefix with an apostrophe.
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
     return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
   const csv = '﻿' + [headers.join(','), ...rows.map(r => headers.map(h => cell(r[h])).join(','))].join('\r\n');

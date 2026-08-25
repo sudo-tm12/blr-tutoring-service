@@ -100,8 +100,9 @@ export async function render(container) {
               <input class="input" id="s-sprint" type="number" step="1" min="0" value="${settings.sprint_fee}" />
             </label>
             <label class="field">
-              <span class="label">Engineering maths hourly rate (R)</span>
+              <span class="label">University (engmath) fee — per subject / month (R)</span>
               <input class="input" id="s-engmath" type="number" step="1" min="0" value="${settings.engmath_rate}" />
+              <span class="helper">Billed monthly to Grade "uni" learners instead of the standard fee.</span>
             </label>
             <label class="field">
               <span class="label">Overdue grace days</span>

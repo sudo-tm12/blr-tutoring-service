@@ -226,7 +226,7 @@ export async function openStudentForm(student, onSaved) {
       ${isEdit ? '' : `
       <label class="check-row full">
         <input type="checkbox" id="st-autocharge" checked />
-        <span>Charge this month's fees now (R250 per subject)</span>
+        <span>Charge this month's fees now</span>
       </label>`}
     </div>`;
 
