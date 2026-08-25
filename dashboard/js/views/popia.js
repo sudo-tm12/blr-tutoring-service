@@ -144,7 +144,7 @@ export async function render(container) {
       const { error } = await sb.from('students').delete().eq('id', sid);
       if (error) throw error;
       toast(`${s.name} deleted — audit row kept`);
-      location.hash = location.hash;
+      window.reloadView();
     } catch (e) {
       toast(e.message, 'err');
       deleteBtn.disabled = false;

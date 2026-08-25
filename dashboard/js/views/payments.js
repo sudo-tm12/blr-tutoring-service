@@ -188,7 +188,7 @@ export async function render(container) {
       await openRecordPaymentModal({
         student: st,
         charge: { id: charge.charge_id, amount: charge.amount, paid: charge.paid },
-        onSaved: () => { location.hash = location.hash; },
+        onSaved: () => { window.reloadView(); },
       });
     }));
 
@@ -198,14 +198,14 @@ export async function render(container) {
       const { error } = await sb.from('payments').update({ charge_id: chargeId }).eq('id', sel.dataset.credit);
       if (error) { toast(error.message, 'err'); return; }
       toast('Credit allocated');
-      location.hash = location.hash;
+      window.reloadView();
     }));
   }));
 
   // Overdue row quick actions
   container.querySelectorAll('[data-pay]').forEach(b => b.addEventListener('click', async () => {
     const st = byStudent.get(b.dataset.pay);
-    await openRecordPaymentModal({ student: st, onSaved: () => { location.hash = location.hash; } });
+    await openRecordPaymentModal({ student: st, onSaved: () => { window.reloadView(); } });
   }));
 
   return { destroy() {} };

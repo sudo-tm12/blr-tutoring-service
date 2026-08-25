@@ -114,7 +114,7 @@ async function sendGmail({ username, password, from, to, subject, body }) {
       'Content-Type: text/plain; charset=UTF-8',
       'Content-Transfer-Encoding: base64',
       '',
-      b64(body),
+      ...(b64(body).match(/.{1,76}/g) || ['']),
       '.',
     ];
     for (const l of message) await send(l);

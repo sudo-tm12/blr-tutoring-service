@@ -100,6 +100,11 @@ async function navigate() {
 
 window.addEventListener('hashchange', navigate);
 
+// Re-render the current view in place. Assigning location.hash to
+// itself does NOT fire hashchange, so mutating views call this to
+// refresh after a save.
+window.reloadView = navigate;
+
 // ----- Drawer (mobile ≤800px) -----
 
 function openDrawer() {

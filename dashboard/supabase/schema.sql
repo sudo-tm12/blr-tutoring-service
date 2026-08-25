@@ -154,7 +154,9 @@ begin
     raise exception 'settings row missing — run seed.sql';
   end if;
   insert into charges (student_id, subject, amount, month, kind)
-  select st.id, subj, s.monthly_fee, target_month, 'recurring'
+  select st.id, subj,
+         case when st.grade = 'uni' then s.engmath_rate else s.monthly_fee end,
+         target_month, 'recurring'
   from students st
   cross join lateral unnest(st.subjects) as subj
   cross join settings s

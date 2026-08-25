@@ -319,16 +319,16 @@ export async function render(container, params = {}) {
   }
 
   container.querySelector('#newTplBtn').addEventListener('click', () =>
-    openTemplateEditor(null, () => location.hash = location.hash));
+    openTemplateEditor(null, () => window.reloadView()));
   container.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () =>
-    openTemplateEditor(templates.find(t => t.id === b.dataset.edit), () => location.hash = location.hash)));
+    openTemplateEditor(templates.find(t => t.id === b.dataset.edit), () => window.reloadView())));
   container.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
     const t = templates.find(x => x.id === b.dataset.del);
     if (!window.confirm(`Delete template "${t.name}"? Past messages keep their copy.`)) return;
     const { error } = await sb.from('templates').delete().eq('id', t.id);
     if (error) { toast(error.message, 'err'); return; }
     toast('Template deleted');
-    location.hash = location.hash;
+    window.reloadView();
   }));
 
   // ----- Message log -----
