@@ -18,6 +18,8 @@ A **single-page marketing website** for BLR Tutoring, a South African Grade 10�
 
 This is deliberate. The site is short, the audience is on poor data, and a build step would mean nothing for the user experience while adding a maintenance burden.
 
+The repo also contains the **owner dashboard** (`dashboard/`) — a separate static SPA where Takalani runs the business (students, payments, WhatsApp/email reminders, attendance, leads, reviews, reports). Spec: [PRD-Dashboard.md](PRD-Dashboard.md).
+
 ---
 
 ## 2. File map
@@ -32,6 +34,7 @@ Blr tutoring service/
 ├── CLAUDE.md           ← This file.
 ├── sitemap.xml         ← XML sitemap for search engines.
 ├── robots.txt          ← Crawl rules for search engines.
+├── PRD-Dashboard.md     ← Owner dashboard PRD (separate product)
 ├── assets/
 │   ├── hero-classroom.png   ← Canonical hero photo
 │   └── takalani-tutor.png   ← Canonical tutor photo
@@ -40,6 +43,15 @@ Blr tutoring service/
 │   └── WhatsApp Image 2026-05-16…   ← Reference screenshots, NOT photos
 ├── scraps/
 │   └── sketch-2026-05-16T18-09-04-l6efmi.napkin   ← Old design sketch
+├── dashboard/
+│   ├── index.html             ← Dashboard SPA: login + shell (hash router)
+│   ├── css/app.css            ← Dashboard styles (site tokens + chip tints)
+│   ├── js/                    ← ES modules: config, supabase, main, lib/, views/
+│   ├── supabase/
+│   │   ├── schema.sql         ← DB source of truth (tables, RLS, fee engine)
+│   │   └── seed.sql           ← Seed data (the 6 site testimonials)
+│   ├── functions/send-email/  ← Deno Edge Function (Gmail SMTP)
+│   └── README.md              ← Owner runbook (setup + daily use)
 └── .git/
 ```
 
@@ -125,6 +137,7 @@ Use this comment pattern to keep navigation easy:
 ### 5.6 No new dependencies
 - No npm packages, no CDN libraries except the existing Google Fonts.
 - If you find yourself wanting a library, the answer is almost always "write the 30 lines yourself."
+- One documented exception: the dashboard loads **supabase-js** from a CDN (jsdelivr). It's the database client; hand-rolling that would be madness. Everything else in the dashboard is hand-rolled — see §11.
 
 ---
 
@@ -186,6 +199,11 @@ Inside `<div class="faq-list">`, add `<details><summary>Q?<span class="plus"></s
 | `<details>` inside `.faq summary` markup    | The `.plus` toggle styling depends on exact class      | Always include `<span class="plus"></span>` inside `<summary>`.            |
 | Modal Escape key                            | Listens at document level; if another listener stops propagation, modals won't close | Don't add document-level keydown handlers that `stopPropagation()`. |
 | Mobile nav links                            | Hidden via `display: none` at ≤ 1024px                 | We need a hamburger eventually. For now, the footer is the mobile nav. Don't gate critical info behind nav links only. |
+| Dashboard opened via `file://`              | ES modules + fetch fail under `file://` CORS           | Serve over HTTP(S) locally (`python -m http.server`); in production it's on Pages anyway. |
+| Dashboard routing                           | GitHub Pages has no server rewrites — real paths 404   | Use hash routes only (`#/payments`, `#/students?id=…`). |
+| Supabase anon key visible in page source    | It's public by design                                  | RLS is the security gate. Never ship the `service_role` key in frontend code. |
+| Schema drift                                | Hand-editing tables in the Supabase UI forks the DB away from `schema.sql` | Change `dashboard/supabase/schema.sql` first, re-run it. It stays canonical. |
+| Site testimonial sync                       | Site fetches approved reviews from Supabase; seeds are the offline fallback | Don't hardcode new reviews into `index.html`'s `SEED` anymore — approve them in the dashboard. |
 
 ---
 
@@ -202,6 +220,8 @@ Inside `<div class="faq-list">`, add `<details><summary>Q?<span class="plus"></s
 | Third-party scripts     | 0                    | 0                | Keep at zero in v1                 |
 
 If you add an image, **optimize it before committing.** Use TinyPNG or Squoosh. Aim for < 80 KB per image where possible.
+
+**Dashboard budget** (separate product, doesn't count against the site's budget): one CDN script (supabase-js), `app.css` < 40 KB raw, each view module < 12 KB raw, no image assets.
 
 ---
 
@@ -233,7 +253,22 @@ If you're Claude reading this to make a change:
 
 ---
 
-## 11. Open TODOs (sorted by impact)
+## 11. The owner dashboard
+
+`dashboard/` is a separate product (spec: PRD-Dashboard.md). The marketing-site rules above still apply to `index.html`; these apply to the dashboard:
+
+- **Stack:** static SPA — vanilla ES modules, hash routing, no build step. Served from the same GitHub Pages site at `blrtutoring.co.za/dashboard/`.
+- **Backend:** Supabase (Postgres). `dashboard/supabase/schema.sql` is the **single source of truth** for the database. Change tables there and re-run it — never edit tables by hand in the Supabase UI, or the repo and the DB drift apart.
+- **Keys:** `dashboard/js/config.js` holds `SUPABASE_URL` + `SUPABASE_ANON_KEY`. The anon key is public by design — **Row Level Security is the security gate**. The `service_role` key must never appear in any frontend file. (The send-email Edge Function uses its own env secret on the server.)
+- **Paths:** all asset refs inside `dashboard/` are relative (`css/app.css`, `js/main.js`). No absolute `/dashboard/...` URLs — GitHub Pages serves from the repo root.
+- **Routing:** hash routes only (`#/overview`, `#/students?id=…`). GitHub Pages 404s real paths; hash routing survives refresh with zero server config.
+- **Money:** fees are snapshotted into `charges` when a month is generated (`generate_charges()`). Changing a fee in Settings never rewrites history — it only affects future months. Billing is calendar-month; term dates are for reporting only.
+- **Templates:** `{placeholders}` used in a message template must also be declared in that template's `vars` array — the renderer fills only declared vars, and the array pre-shapes future WhatsApp Cloud API calls.
+- **No new dependencies** — supabase-js is the only CDN script; charts are ~50 lines of inline SVG.
+
+---
+
+## 12. Open TODOs (sorted by impact)
 
 These are tracked in PRD §13 Roadmap. Listed here for engineering convenience.
 
@@ -256,15 +291,19 @@ These are tracked in PRD §13 Roadmap. Listed here for engineering convenience.
 - [x] WebP feature detection (`.webp` class on `<html>` for CSS fallback chain)
 
 ### Still open (ops or v1.5+)
-- [ ] **Real testimonials** — collect 6+ from current learners, replace `SEED` array. *Ops task — Takalani to send requests via WhatsApp.*
+- [ ] **Real testimonials** — collect 6+ from current learners and approve them in the dashboard (site pulls approved reviews; `SEED` remains the offline fallback). *Ops task — Takalani to send requests via WhatsApp.*
 - [ ] **Convert hero + tutor photo to WebP** with PNG fallback. *Use Squoosh; target < 80 KB each. WebP detection JS is already in place.*
 - [ ] **Capture real photos of a live class** for hero variation and section backgrounds.
-- [ ] **Formspree/Airtable backend** for testimonial submissions (v1.5 — see PRD §13).
+- [ ] **Dashboard go-live (ops)** — Supabase project setup, admin user, keys into `dashboard/js/config.js`, Gmail app password for email sending. ~20 min; steps in `dashboard/README.md`.
+- [ ] **MFA on the admin account** — single-user auth is the dashboard's weak point. Enable TOTP in Supabase Auth.
 - [ ] **Analytics** — Plausible or Umami. Not Google Analytics (data sovereignty).
+
+### Superseded
+- [x] **Testimonial backend (Formspree/Airtable)** — replaced by the owner dashboard's submit → moderate → publish flow.
 
 ---
 
-## 12. Contact
+## 13. Contact
 
 For product decisions: **Takalani Mugeri** — see footer for contact info.
 For design questions: refer to Design.md; if not answered, escalate to product owner.

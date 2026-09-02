@@ -348,10 +348,21 @@ Keep that voice everywhere. If a line doesn't sound like Takalani would say it i
 - Favicon + apple-touch-icon
 - Real photos for hero (a few shots of an actual class in progress)
 
-### v1.5 — Testimonial backend (Month 2)
-- Formspree or Airtable endpoint for review submissions
-- Email notification to Takalani on each submission
-- Manual approval flow before publishing (basic admin via Airtable view)
+### v1.2 — Owner dashboard (August 2026)
+- Students CRM (add, search, POPIA consents, quick actions)
+- Payment ledger: monthly charges, payments, month register, overdue chasing
+- WhatsApp + email communications from the dashboard (templates, batch reminders, message log)
+- Attendance register with churn flags
+- Leads pipeline with convert-to-student
+- Testimonial moderation with live site sync (supersedes v1.5 below)
+- Reports with CSV export; POPIA export/delete tools
+- Spec: [PRD-Dashboard.md](PRD-Dashboard.md)
+
+### v1.5 — Testimonial backend (Month 2) — superseded by v1.2
+- ~~Formspree or Airtable endpoint for review submissions~~
+- ~~Email notification to Takalani on each submission~~
+- ~~Manual approval flow before publishing (basic admin via Airtable view)~~
+- Delivered by the owner dashboard instead: submit → moderate → publish, with live site sync included.
 
 ### v2.0 — Conversion optimization (Month 3+)
 - A/B test hero copy variants
@@ -377,6 +388,12 @@ Keep that voice everywhere. If a line doesn't sound like Takalani would say it i
 | 2026-06-30 | Seeded testimonials in v1, real ones in v1.1                            | Empty testimonial section is worse than seeded one. Replace within 30 days is a hard ops commitment.  |
 | 2026-06-30 | Two-subject hub design over 6+ small course cards                       | Cards looked thin without real per-grade photography. Hub gives every grade substance.                |
 | 2026-06-30 | No login/auth on this site                                              | Already exists at `blrtutoring.co.za/courses`. Don't duplicate it; link to it from nav when ready.    |
+| 2026-08-24 | Owner dashboard: static SPA + Supabase free tier                        | No build step matches the repo philosophy; managed Postgres + auth = zero server babysitting.          |
+| 2026-08-24 | Dashboard hosted at `blrtutoring.co.za/dashboard/` (Pages subfolder)    | Same repo, same Pages site — no extra DNS/hosting; hash routing avoids server rewrites.               |
+| 2026-08-24 | WhatsApp outreach = wa.me click-to-send in v1                           | Free, zero setup, fits 30–50 students. Cloud API (automated sending) deferred — needs Meta verification + dedicated number. |
+| 2026-08-24 | Supabase data region eu-central-1 (Frankfurt)                           | No SA region exists. Disclosed in the privacy notice under POPIA (cross-border transfer).              |
+| 2026-08-24 | Email = mailto fallback + Gmail-SMTP Edge Function                      | mailto works day one; SMTP send requires only a Gmail app password from the owner.                    |
+| 2026-08-24 | Learner email nullable, NOT unique on students                          | Sibling learners often share a parent email; payments keep a free-text reference for EFT reconciliation. |
 
 ---
 

@@ -1158,12 +1158,6 @@
     font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 4px 8px; border-radius: 99px;
   }
-  /* Highlight the freshly-posted review briefly */
-  .t-card.just-posted {
-    box-shadow: 0 0 0 2px var(--sky), var(--shadow);
-    border-color: var(--sky);
-  }
-
   /* Testimonial form */
   .t-form-wrap {
     background: #fff;
@@ -2684,7 +2678,7 @@
       <div class="t-form-wrap reveal">
       <div class="t-form-head">
         <h4>Studied with us? <em>Leave a review</em></h4>
-        <p>Tell the next learner what to expect. Your review is emailed to us and goes on the site once we've checked it.</p>
+        <p>Tell the next learner what to expect. Your words help families decide.</p>
       </div>
       <form id="testimonialForm" novalidate>
         <div class="form-row">
@@ -2725,15 +2719,13 @@
           <div class="char-count"><span id="charCount">0</span> / 400</div>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn btn-dark btn-lg">Send review
+          <button type="submit" class="btn btn-dark btn-lg">Post review
             <svg class="icn" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
           </button>
         </div>
         <div class="success-msg" id="successMsg">
           <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-          <span>Your email app is opening — press send to deliver your review. Nothing reaches
-            us until you do. If it doesn't open, email
-            <a href="mailto:blrtutoringservices@gmail.com">blrtutoringservices@gmail.com</a>.</span>
+          Thanks! Your review goes to Takalani for approval before it's published.
         </div>
       </form>
       </div>
@@ -3028,6 +3020,13 @@
 </div>
 
 <script>
+  // ===== Supabase testimonials sync =====
+  // Fill in both values after creating the dashboard's Supabase project
+  // (see dashboard/README.md). The anon key is public by design: row-level
+  // security means this page can only READ approved reviews and only POST
+  // new ones as `pending` — Takalani approves them from the dashboard.
+  const SB = { url: 'PASTE_YOUR_SUPABASE_URL', anon: 'PASTE_YOUR_SUPABASE_ANON_KEY' };
+
   // ===== WebP feature detection =====
   (function(){var w=new Image();w.onload=w.onerror=function(){
     if(w.height===2){document.documentElement.classList.add('webp');}
@@ -3278,16 +3277,48 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
-  // animate = true → fade cards in on scroll (initial load).
-  // animate = false → render cards immediately visible (after a submit, so the
-  // new review is guaranteed to show even if the reveal observer hasn't fired).
   function perPage() { return window.innerWidth <= 640 ? 3 : 4; }
   let shownCount = perPage();
 
-  // Build the full review list (user submissions first, newest on top, then seeds)
-  function getAllReviews() {
+  // ---- Supabase sync ----
+  // Approved reviews live in Supabase and are managed from the dashboard.
+  // The fetch is cached for 24h so the page stays fast and still works
+  // offline. Legacy localStorage reviews (posted before the dashboard
+  // existed) keep showing, deduped against the DB by text.
+  let remoteReviews = [];
+  const legacyReviews = () => {
     const stored = JSON.parse(localStorage.getItem('blr_testimonials') || '[]');
-    return [...[...stored].reverse(), ...SEED];
+    return [...stored].reverse().map(t => ({ ...t, legacy: true }));
+  };
+  const seenTexts = new Set([...legacyReviews(), ...SEED].map(t => t.text.trim().toLowerCase()));
+  function dedupeRemote(rows) {
+    return rows
+      .filter(r => !r.is_seed && !seenTexts.has((r.text || '').trim().toLowerCase()))
+      .map(r => ({ name: r.name, grade: r.grade, subject: r.subject, rating: r.rating, text: r.text, remote: true }));
+  }
+  async function fetchApprovedReviews() {
+    if (!SB.url || SB.url.startsWith('PASTE_')) return [];
+    const cacheKey = 'blr_reviews_cache';
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(cacheKey) || 'null'); } catch (e) {}
+    if (cached && Date.now() - cached.at < 24 * 60 * 60 * 1000) return cached.rows;
+    try {
+      const res = await fetch(`${SB.url.replace(/\/$/, '')}/rest/v1/testimonials?status=eq.approved&order=created_at.desc`, {
+        headers: { apikey: SB.anon, Authorization: `Bearer ${SB.anon}` },
+      });
+      if (!res.ok) return cached ? cached.rows : [];
+      const rows = await res.json();
+      try { localStorage.setItem(cacheKey, JSON.stringify({ at: Date.now(), rows })); } catch (e) {}
+      return rows;
+    } catch (e) {
+      return cached ? cached.rows : [];
+    }
+  }
+
+  // Full review list: approved DB reviews first, then legacy submissions,
+  // then seeds (the offline/fallback baseline).
+  function getAllReviews() {
+    return [...remoteReviews, ...legacyReviews(), ...SEED];
   }
 
   function renderTestimonials(animate) {
@@ -3313,7 +3344,7 @@
             <div class="t-name">${escapeHTML(t.name)}</div>
             <div class="t-meta">${escapeHTML(t.grade)} · ${escapeHTML(t.subject)}</div>
           </div>
-          ${t.seed ? '' : '<span class="t-new" title="Only visible to you until we approve it">Pending</span>'}
+          ${t.legacy && !t.seed ? '<span class="t-new">New</span>' : ''}
         </div>
       `;
       grid.appendChild(card);
@@ -3331,6 +3362,14 @@
   });
 
   renderTestimonials(true);
+
+  // Pull approved reviews from the dashboard DB (24h-cached; legacy + SEED
+  // already painted above as the offline fallback).
+  fetchApprovedReviews().then(rows => {
+    remoteReviews = dedupeRemote(rows);
+    shownCount = perPage();
+    renderTestimonials(true);
+  }).catch(() => {});
 
   // Star picker
   let currentRating = 5;
@@ -3354,11 +3393,12 @@
   const charCount = document.getElementById('charCount');
   msgInput.addEventListener('input', () => { charCount.textContent = msgInput.value.length; });
 
-  // Where reviews are sent for approval before they go on the site
-  const REVIEW_INBOX = 'blrtutoringservices@gmail.com';
-
-  // Form submit
-  document.getElementById('testimonialForm').addEventListener('submit', e => {
+  // Form submit → Supabase. The review lands as `pending` (row-level
+  // security enforces it — this page cannot self-approve) and appears on the
+  // site after Takalani approves it in the dashboard. Nothing is written to
+  // localStorage anymore; failures show an error instead of fake success.
+  const submitBtn = document.querySelector('#testimonialForm button[type="submit"]');
+  document.getElementById('testimonialForm').addEventListener('submit', async e => {
     e.preventDefault();
     const name    = document.getElementById('tf-name').value.trim();
     const grade   = document.getElementById('tf-grade').value;
@@ -3370,47 +3410,34 @@
       alert('Please complete all fields. Your review must be at least 20 characters.');
       return;
     }
-    const entry = { name, grade, subject, rating, text, date: new Date().toISOString().slice(0,10), seed:false };
-    const stored = JSON.parse(localStorage.getItem('blr_testimonials') || '[]');
-    stored.push(entry);
-    localStorage.setItem('blr_testimonials', JSON.stringify(stored));
-
-    // Reset pagination so the new review is guaranteed visible (it's first in the list).
-    shownCount = perPage();
-    const grid = renderTestimonials(false);
-    e.target.reset();
-    setStars(5);
-    charCount.textContent = '0';
-    const msg = document.getElementById('successMsg');
-    msg.classList.add('show');
-    setTimeout(() => msg.classList.remove('show'), 15000);
-
-    // Highlight the newest card (rendered first) and bring it into view.
-    if (grid && grid.firstElementChild) {
-      const newCard = grid.firstElementChild;
-      newCard.classList.add('just-posted');
-      newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(() => newCard.classList.remove('just-posted'), 2600);
+    if (!SB.url || SB.url.startsWith('PASTE_')) {
+      alert('Review submissions are not connected yet — please try again later.');
+      return;
     }
-
-    // Hand the review to the visitor's mail app, addressed to BLR. Nothing is sent
-    // automatically — they still press send. Done last so the UI above has already
-    // updated by the time the mail client takes focus.
-    const mailSubject = `New website review — ${name} (${grade}, ${subject})`;
-    const mailBody = [
-      `Name:    ${name}`,
-      `Grade:   ${grade}`,
-      `Subject: ${subject}`,
-      `Rating:  ${rating}/5`,
-      '',
-      'Review:',
-      text,
-      '',
-      '— Sent from the review form on blrtutoring.co.za',
-    ].join('\n');
-    window.location.href = `mailto:${REVIEW_INBOX}`
-      + `?subject=${encodeURIComponent(mailSubject)}`
-      + `&body=${encodeURIComponent(mailBody)}`;
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch(`${SB.url.replace(/\/$/, '')}/rest/v1/testimonials`, {
+        method: 'POST',
+        headers: {
+          apikey: SB.anon,
+          Authorization: `Bearer ${SB.anon}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ name, grade, subject, rating, text }),
+      });
+      if (!res.ok) throw new Error('submit failed');
+      e.target.reset();
+      setStars(5);
+      charCount.textContent = '0';
+      const msg = document.getElementById('successMsg');
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 6000);
+    } catch (err) {
+      alert("Sorry — your review didn't go through. Please try again, or WhatsApp us and we'll help.");
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 
   // Active nav on scroll (throttled via rAF) + glass depth

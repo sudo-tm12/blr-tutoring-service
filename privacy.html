@@ -60,7 +60,7 @@
 <div class="page">
   <div class="card">
     <h1>Privacy Notice</h1>
-    <p>Effective: 1 July 2026 · Last updated: 1 July 2026</p>
+    <p>Effective: 24 August 2026 · Last updated: 24 August 2026</p>
 
     <p>BLR Tutoring ("we", "us", "our") respects your privacy. This notice explains how we collect, use, and protect your personal information in compliance with South Africa's <strong>Protection of Personal Information Act (POPIA)</strong>.</p>
 
@@ -77,7 +77,7 @@
     <p>We collect only the information you give us directly:</p>
     <ul>
       <li><strong>Enrolment:</strong> When you message us on WhatsApp to enrol, you may share your name, your child's name, grade, subject choice, email address, and phone number — solely to provide the tutoring service.</li>
-      <li><strong>Testimonial submissions:</strong> If you submit a review through our website, you provide your first name, grade, subject studied, star rating, and a short message. This is stored in your browser's local storage only — we do not receive it on a server. (See §5 for limitations.)</li>
+      <li><strong>Testimonial submissions:</strong> If you submit a review through our website, you provide your name, grade, subject studied, star rating, and a short message. It is sent to our password-protected business database, where it waits in a review queue until Takalani approves it for publication. (See §5.)</li>
       <li><strong>Payment references:</strong> When you pay by EFT, your bank may share your name and payment reference with us via our bank statement. We do not store full bank account numbers.</li>
     </ul>
     <p>We do <strong>not</strong> use cookies, analytics trackers, or third-party advertising on our website.</p>
@@ -89,6 +89,7 @@
       <li>Communicating with you about your child's classes (via WhatsApp or email)</li>
       <li>Sending payment confirmations and receipts</li>
       <li>Responding to your enquiries</li>
+      <li>Reviewing and — with your submission as consent — publishing your testimonial on our website</li>
     </ul>
     <p>We do not sell, rent, or share your information with third parties. We do not use your information for automated decision-making or profiling.</p>
 
@@ -96,13 +97,14 @@
     <p>We take reasonable technical and organisational measures to secure your information:</p>
     <ul>
       <li>WhatsApp conversations are end-to-end encrypted.</li>
-      <li>Enrolment records are stored on a password-protected device accessible only to the lead tutor.</li>
-      <li>We do not maintain a public-facing database of learner information.</li>
-      <li>Our website has no backend server — no personal data submitted through the site is stored by us.</li>
+      <li>Our business records (enrolments, payments, attendance, communications) live in a password-protected database with row-level security. Only Takalani — the single account holder — can read or change them.</li>
+      <li>The database is hosted in Frankfurt, Germany (EU) with Supabase. Data is encrypted in transit (HTTPS) and at rest, and the EU is recognised under POPIA as providing adequate protection.</li>
+      <li>The public website is limited to reading approved testimonials and submitting new ones into the review queue — it cannot see any learner data.</li>
     </ul>
 
-    <h2>5. Testimonial submissions — important caveat</h2>
-    <p>Testimonials submitted through our website are stored in your browser's <strong>localStorage</strong> and are visible only to you on your device. They are not transmitted to us or to other visitors. This is a v1 limitation. When we add a backend review system (planned v1.5), reviews you submit will be sent to us for approval before being published. At that point, we will ask for your explicit consent before publishing your name and review publicly.</p>
+    <h2>5. Testimonial submissions — approval and consent</h2>
+    <p>When you submit a review through our website, it is sent to our business database and placed in a <strong>pending queue</strong>. By submitting, you consent to your name, grade, subject and review being published on our website once approved. Takalani reviews every submission and approves only genuine reviews from real families. You can ask us to take your review down at any time — message us and we will remove it.</p>
+    <p>We never publish contact details alongside a review, and we do not edit review text without your permission.</p>
 
     <h2>6. Your rights under POPIA</h2>
     <p>Under POPIA, you have the right to:</p>
