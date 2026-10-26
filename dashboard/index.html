@@ -9,45 +9,128 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E2238'/%3E%3Ctext x='32' y='44' font-family='Arial,sans-serif' font-size='36' font-weight='800' fill='%234FA3D1' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
 
 <!-- ===== Login / auth screen ===== -->
 <div id="authScreen" class="auth-wrap" hidden>
-  <form id="loginForm" class="auth-card" autocomplete="on">
-    <div class="auth-mark" aria-hidden="true">B</div>
-    <h1 class="auth-title">BLR Dashboard</h1>
-    <p class="auth-sub">Owner access only — this is where BLR runs.</p>
-    <label class="field">
-      <span class="label">Email</span>
-      <input type="email" id="loginEmail" autocomplete="username" required />
-    </label>
-    <label class="field">
-      <span class="label">Password</span>
-      <input type="password" id="loginPassword" autocomplete="current-password" required />
-    </label>
-    <p id="loginError" class="auth-error" hidden></p>
-    <button type="submit" class="btn btn-dark btn-lg btn-block">Sign in</button>
-    <button type="button" id="forgotBtn" class="link-btn">Forgot password?</button>
-    <p id="forgotMsg" class="auth-note" hidden>Reset link sent — check your email (also spam).</p>
-  </form>
+  <div class="auth-shell">
 
-  <form id="resetForm" class="auth-card" hidden>
-    <h2 class="auth-title">Set a new password</h2>
-    <p class="auth-sub">Choose a new password for the dashboard.</p>
-    <label class="field">
-      <span class="label">New password</span>
-      <input type="password" id="resetPassword" minlength="8" required />
-    </label>
-    <label class="field">
-      <span class="label">Repeat password</span>
-      <input type="password" id="resetPassword2" minlength="8" required />
-    </label>
-    <p id="resetError" class="auth-error" hidden></p>
-    <button type="submit" class="btn btn-dark btn-lg btn-block">Save password</button>
-  </form>
+    <!-- Brand panel — mirrors the site hero treatment (Design.md §3.4) -->
+    <aside class="auth-brand">
+      <div class="auth-glyphs" aria-hidden="true">
+        <span>&Sigma;</span><span>&pi;</span><span>&int;</span><span>&radic;</span>
+        <span>&infin;</span><span>&theta;</span><span>&fnof;</span><span>&Delta;</span>
+      </div>
+
+      <div class="auth-brand-top">
+        <div class="auth-mark" aria-hidden="true">B</div>
+        <div>
+          <div class="auth-brand-name">BLR Tutoring</div>
+          <div class="auth-brand-tag">Owner dashboard</div>
+        </div>
+      </div>
+
+      <div class="auth-brand-body">
+        <p class="auth-chip"><span class="auth-pulse" aria-hidden="true"></span> Secure owner sign-in</p>
+        <h1 class="auth-display">Where BLR<br />runs.</h1>
+        <blockquote class="auth-quote">
+          “Got stuck on a trig proof at 9pm and had a reply with a worked example within 20 minutes.”
+          <cite class="auth-quote-by">Naledi P. · Gr 11 Mathematics</cite>
+        </blockquote>
+      </div>
+
+      <ul class="auth-points">
+        <li>
+          <span class="auth-point-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="3"/><path d="M2.5 10h19"/><path d="M16.5 14.5h2"/></svg>
+          </span>
+          Fees, payments &amp; the month register
+        </li>
+        <li>
+          <span class="auth-point-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2-3.2A8 8 0 1 1 21 12z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg>
+          </span>
+          WhatsApp &amp; email reminders
+        </li>
+        <li>
+          <span class="auth-point-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20 6v6c0 4.8-3.4 8.2-8 9.2C7.4 20.2 4 16.8 4 12V6l8-3.2z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>
+          </span>
+          POPIA export &amp; delete
+        </li>
+      </ul>
+
+      <a class="auth-back" href="../index.html">&larr; blrtutoring.co.za</a>
+    </aside>
+
+    <!-- Form panel -->
+    <div class="auth-panel">
+      <form id="loginForm" class="auth-card" autocomplete="on">
+        <h2 class="auth-title">Welcome back</h2>
+        <p class="auth-sub">Sign in to run the business.</p>
+
+        <label class="field">
+          <span class="label">Email</span>
+          <input type="email" id="loginEmail" class="input" autocomplete="username" required />
+        </label>
+        <label class="field">
+          <span class="label">Password</span>
+          <span class="pw-wrap">
+            <input type="password" id="loginPassword" class="input" autocomplete="current-password" required />
+            <button type="button" class="pw-toggle" data-for="loginPassword" aria-label="Show password" aria-pressed="false">
+              <svg class="eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16"/><path d="M9.6 6.2A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3 3.8"/><path d="M6.2 8.1A16.6 16.6 0 0 0 2.5 12S6 18.5 12 18.5c1.3 0 2.5-.3 3.6-.7"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+            </button>
+          </span>
+        </label>
+
+        <p id="loginError" class="auth-error" role="alert" hidden></p>
+
+        <button type="submit" id="loginSubmit" class="btn btn-dark btn-lg btn-block auth-submit">Sign in</button>
+        <button type="button" id="forgotBtn" class="link-btn">Forgot password?</button>
+        <p id="forgotMsg" class="auth-note" role="status" hidden>Reset link sent — check your email (also spam).</p>
+      </form>
+
+      <form id="resetForm" class="auth-card" hidden>
+        <h2 class="auth-title">Set a new password</h2>
+        <p class="auth-sub">Choose a new password for the dashboard.</p>
+
+        <label class="field">
+          <span class="label">New password</span>
+          <span class="pw-wrap">
+            <input type="password" id="resetPassword" class="input" autocomplete="new-password" minlength="8" required />
+            <button type="button" class="pw-toggle" data-for="resetPassword" aria-label="Show password" aria-pressed="false">
+              <svg class="eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16"/><path d="M9.6 6.2A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3 3.8"/><path d="M6.2 8.1A16.6 16.6 0 0 0 2.5 12S6 18.5 12 18.5c1.3 0 2.5-.3 3.6-.7"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+            </button>
+          </span>
+        </label>
+        <label class="field">
+          <span class="label">Repeat password</span>
+          <span class="pw-wrap">
+            <input type="password" id="resetPassword2" class="input" autocomplete="new-password" minlength="8" required />
+            <button type="button" class="pw-toggle" data-for="resetPassword2" aria-label="Show password" aria-pressed="false">
+              <svg class="eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16"/><path d="M9.6 6.2A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3 3.8"/><path d="M6.2 8.1A16.6 16.6 0 0 0 2.5 12S6 18.5 12 18.5c1.3 0 2.5-.3 3.6-.7"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+            </button>
+          </span>
+        </label>
+
+        <p id="resetError" class="auth-error" role="alert" hidden></p>
+
+        <button type="submit" id="resetSubmit" class="btn btn-dark btn-lg btn-block auth-submit">Save password</button>
+        <button type="button" id="backToLoginBtn" class="link-btn">&larr; Back to sign in</button>
+      </form>
+
+      <p class="auth-foot">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+        Only the BLR owner account can sign in.
+      </p>
+    </div>
+  </div>
 </div>
 
 <!-- ===== App shell ===== -->

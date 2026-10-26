@@ -403,6 +403,13 @@ Chips are the dashboard's primary status language. Colour alone never carries me
 | Excused / Info      | `--sky-tint`       | `--sky-deep`      | `--line`              |
 | Overdue / Attention | `--card`           | `--rust-deep`     | `--rust`              |
 
+### Auth screen
+- **Shell:** the site's white page card (§4.1) — `--r-xl` radius on `--bg`, `--shadow-lg` — split into a brand panel and a form panel. Stacks vertically ≤960px; edge-to-edge on phones like the site card.
+- **Brand panel** reuses the hero treatment (§3.4): `--ink` → `--ink-2` diagonal gradient with the sky/rust radial washes, plus a decorative math-glyph layer at 0.18 opacity. The glyphs are decorative characters, not icons — §3.3 governs icons.
+- **One serif moment** (§3.2): the learner quote in Newsreader italic on the brand panel.
+- **Form panel** reuses §5.4 form elements and `btn-dark btn-lg` for submit. Password fields get a show/hide toggle (44×44 on phones); submits swap to a busy label while in flight.
+- **Feedback:** errors are `--rust-tint`/`--rust-deep` boxes (`role="alert"`), confirmations `--green-tint`/`--green-deep` (`role="status"`). Colour never carries meaning alone (status rule above).
+
 ### Layout
 - **App shell:** fixed 240px sidebar (`--ink` bg, white text, `--sky` active states) + content area on `--bg`. At ≤ 640px the sidebar becomes the site's off-canvas drawer pattern (hamburger button, overlay, Esc + click-outside close).
 - **Content:** max-width 1200px. Cards use `--card` bg, `--r-md` radius, `--line` border. The dashboard is dense — `--shadow` only on hover.

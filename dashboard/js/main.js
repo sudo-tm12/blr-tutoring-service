@@ -34,6 +34,7 @@ function showLogin() {
   appEl.hidden = true;
   document.getElementById('loginForm').hidden = false;
   document.getElementById('resetForm').hidden = true;
+  document.getElementById('loginEmail').focus();
 }
 
 function showResetForm() {
@@ -123,13 +124,29 @@ document.addEventListener('keydown', e => {
 
 // ----- Login / forgot / reset handlers -----
 
+// While a submit is in flight the button shows its busy label and can't be
+// double-clicked (fast networks make the wait tiny; slow ones don't lie).
+function setBusy(btn, busy, busyLabel) {
+  if (busy) {
+    btn.dataset.idleLabel = btn.textContent;
+    btn.textContent = busyLabel;
+    btn.classList.add('loading');
+  } else {
+    if (btn.dataset.idleLabel) btn.textContent = btn.dataset.idleLabel;
+    btn.classList.remove('loading');
+  }
+}
+
 document.getElementById('loginForm').addEventListener('submit', async e => {
   e.preventDefault();
   const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginSubmit');
   errEl.hidden = true;
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
+  setBusy(btn, true, 'Signing in…');
   const { error } = await signIn(email, password);
+  setBusy(btn, false);
   if (error) {
     errEl.textContent = error.message === 'Invalid login credentials'
       ? 'Wrong email or password.' : error.message;
@@ -150,16 +167,33 @@ document.getElementById('forgotBtn').addEventListener('click', async () => {
 document.getElementById('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
   const errEl = document.getElementById('resetError');
+  const btn = document.getElementById('resetSubmit');
   errEl.hidden = true;
   const p1 = document.getElementById('resetPassword').value;
   const p2 = document.getElementById('resetPassword2').value;
   if (p1.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.hidden = false; return; }
   if (p1 !== p2) { errEl.textContent = 'Passwords don\'t match.'; errEl.hidden = false; return; }
+  setBusy(btn, true, 'Saving…');
   const { error } = await setNewPassword(p1);
+  setBusy(btn, false);
   if (error) { errEl.textContent = error.message; errEl.hidden = false; return; }
   toast('Password updated');
   location.hash = '#/overview';
   await showApp();
+});
+
+document.getElementById('backToLoginBtn').addEventListener('click', showLogin);
+
+// Show/hide password toggles (all auth screens)
+document.querySelectorAll('.pw-toggle').forEach(toggle => {
+  const input = document.getElementById(toggle.dataset.for);
+  toggle.addEventListener('click', () => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    toggle.setAttribute('aria-pressed', String(show));
+    toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    input.focus();
+  });
 });
 
 document.getElementById('logoutBtn').addEventListener('click', async () => {

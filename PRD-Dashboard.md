@@ -170,3 +170,4 @@ Billing is calendar-month (R250/month means the calendar month). Term dates live
 | 2026-08-24 | EU (Frankfurt) data region | No SA Supabase region; disclosed in the privacy notice under POPIA |
 | 2026-08-24 | Email = mailto fallback + Gmail-SMTP Edge Function | mailto works day one; SMTP send requires only an app password from the owner |
 | 2026-08-24 | Learner email nullable, NOT unique on students | Sibling learners often share a parent email; payments keep a free-text reference for EFT reconciliation |
+| 2026-10-26 | Auth screen rebuilt to the site's design standard (split brand/form shell) | The login is the owner's daily first impression; it reuses the hero treatment and existing tokens — no new colours, fonts, or dependencies (Design.md §10) |
