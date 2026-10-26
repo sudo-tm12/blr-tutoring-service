@@ -88,7 +88,19 @@ To make email send directly:
    [turn on 2-Step Verification](https://myaccount.google.com/security),
    then [create an App Password](https://myaccount.google.com/apppasswords)
    (16 characters, no spaces).
-2. On your computer, with the Supabase CLI installed:
+2. Deploy the function — either way works:
+
+   **Option A: Supabase dashboard (no tools needed):**
+   1. **Edge Functions → Deploy a new function** → name it `send-email`.
+   2. Paste the entire contents of
+      [`functions/send-email/index.ts`](functions/send-email/index.ts),
+      replacing what's in the editor → **Deploy**.
+   3. **Edge Functions → `send-email` → Manage secrets** (or
+      **Project Settings → Edge Functions → Secrets**) and add:
+      `GMAIL_USER` = `blrtutoringservices@gmail.com` ·
+      `GMAIL_APP_PASSWORD` = the 16-character app password.
+
+   **Option B: Supabase CLI**, on a computer with it installed:
    ```bash
    supabase login
    supabase link --project-ref <project-ref>   # from Project Settings → General
