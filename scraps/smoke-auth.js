@@ -22,7 +22,7 @@ const ids = [
   }
   const css = await (await fetch(base + 'css/app.css')).text();
   for (const probe of ['--serif', '.auth-shell', '.auth-glyphs', '.auth-quote', '.pw-toggle',
-                       '.auth-error[hidden]', '100dvh', 'prefers-reduced-motion']) {
+                       '.auth-error[hidden]', '.auth-wrap[hidden]', '100dvh', 'prefers-reduced-motion']) {
     if (!css.includes(probe)) { console.log('MISSING CSS:', probe); missing++; }
   }
   console.log(`app.css size: ${(css.length / 1024).toFixed(1)} KB (budget 40 KB raw)`);
