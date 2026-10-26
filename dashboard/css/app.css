@@ -37,6 +37,11 @@ button { font-family: inherit; }
   place-items: center;
   padding: 24px;
 }
+/* Attribute+class specificity (0,1,1) beats the plain .auth-wrap rule
+   (0,1,0) so `element.hidden = true` in JS actually hides the login card.
+   Without this, .auth-wrap's display:grid outranks the UA
+   [hidden]{display:none} and the card stays visible after auth. */
+.auth-wrap[hidden] { display: none; }
 .auth-card {
   background: var(--card);
   border: 1px solid var(--line);
