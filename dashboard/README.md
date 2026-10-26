@@ -39,6 +39,10 @@ This file is the setup runbook + user guide. The product spec is
 2. Email: `blrtutoringservices@gmail.com` · Password: a strong one.
 3. **Exactly one** auth user is expected — the security model gives the whole
    dashboard to anyone who can log in. Do not add more accounts.
+4. **Lock the front door:** **Authentication → Sign In / Providers → Email** →
+   turn **"Allow new users to sign up" OFF**. The dashboard has no sign-up form
+   by design, but the signup API stays open until this is off — with it on,
+   anyone could create an account and reach the learner data.
 
 ### 1.4 Auth URLs
 
